@@ -49,20 +49,27 @@ export default function SubmitBillPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title || "Untitled",
-          amount: Number(amount) || 0,
-          submittedBy,
-          departmentId: departmentId || undefined,
+          amount: amount === "" ? 0 : Number(amount),
+          submittedBy: submittedBy ? String(submittedBy).trim() : undefined,
+          departmentId: departmentId && departmentId !== "__none__" ? departmentId : undefined,
           description: description || undefined,
         }),
       });
-      const data = await res.json().catch(() => ({}));
+      const text = await res.text();
+      let data: { error?: string } = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = { error: "Invalid response from server." };
+      }
       if (!res.ok) {
-        setError(data.error ?? "Failed to submit");
+        setError(data.error ?? "Failed to create bill.");
         return;
       }
       router.push("/bills");
-    } catch {
-      setError("Failed to submit bill");
+    } catch (err) {
+      setError("Network or unexpected error. Check the console.");
+      console.error("Bill submit error:", err);
     } finally {
       setSubmitting(false);
     }

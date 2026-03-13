@@ -92,10 +92,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const amountNum = Number(amount);
+    const safeAmount = Number.isFinite(amountNum) && amountNum >= 0 ? amountNum : 0;
+
     const bill = await prisma.bill.create({
       data: {
         title: title && String(title).trim() ? String(title).trim() : "Untitled",
-        amount: Number(amount) ?? 0,
+        amount: safeAmount,
         submittedBy: submitterIdToUse,
         departmentId: deptId,
         description: description && String(description).trim() ? String(description).trim() : null,
@@ -115,11 +118,15 @@ export async function POST(request: NextRequest) {
     console.error("Bills POST", e);
     const message =
       e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : "";
-    return NextResponse.json(
-      {
-        error: message && message.includes("Foreign key") ? "Invalid submitter or department. Check that the user and department exist." : "Failed to create bill",
-      },
-      { status: 500 }
-    );
+    let errorMessage = "Failed to create bill.";
+    if (message) {
+      if (message.includes("Foreign key") || message.includes("foreign key"))
+        errorMessage = "Invalid submitter or department. Add staff and departments first.";
+      else if (message.includes("Unique constraint") || message.includes("unique"))
+        errorMessage = "A bill with this data already exists.";
+      else
+        errorMessage = message.length > 120 ? message.slice(0, 120) + "…" : message;
+    }
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
