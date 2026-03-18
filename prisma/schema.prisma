@@ -28,6 +28,7 @@ model User {
   id           String   @id @default(uuid()) @db.Char(36)
   name         String   @db.VarChar(255)
   email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
   role         String   @db.VarChar(50)
   departmentId String?  @map("department_id") @db.Char(36)
   avatar       String?  @db.VarChar(512)
@@ -226,4 +227,41 @@ model DiscussionPost {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("discussion_posts")
+}
+
+model Notice {
+  id          String   @id @default(uuid()) @db.Char(36)
+  title       String   @db.VarChar(500)
+  body        String?  @db.Text
+  type        String   @default("announcement") @db.VarChar(50)
+  publishedAt DateTime @default(now()) @map("published_at") @db.DateTime(3)
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@map("notices")
+}
+
+model OtpVerification {
+  id        String   @id @default(uuid()) @db.Char(36)
+  phoneOrEmail String @map("phone_or_email") @db.VarChar(255)
+  otp       String   @db.VarChar(10)
+  expiresAt DateTime @map("expires_at") @db.DateTime(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(3)
+
+  @@map("otp_verifications")
+}
+
+model HeroSlide {
+  id        String   @id @default(uuid()) @db.Char(36)
+  imageUrl  String   @map("image_url") @db.VarChar(512)
+  title     String?  @db.VarChar(255)
+  subtitle  String?  @db.VarChar(500)
+  linkUrl   String?  @map("link_url") @db.VarChar(255)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(3)
+
+  @@index([active, order])
+  @@map("hero_slides")
 }

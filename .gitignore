@@ -1,8 +1,11 @@
-node_modules/
-.next/
+@"
+node_modules
+.next
+public/uploads
 .env
 .env.local
-.vercel/
-dist/
-build/
+.vercel
+dist
+build
 *.log
+"@ | Set-Content .gitignore

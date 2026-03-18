@@ -9,13 +9,13 @@ INSERT INTO `departments` (`id`, `name`, `head_id`, `created_at`, `updated_at`) 
 ('dept-3', 'Water', NULL, NOW(3), NOW(3)),
 ('dept-4', 'Housing', NULL, NOW(3), NOW(3));
 
--- Users (password hashes would go in real app - this is demo)
-INSERT INTO `users` (`id`, `name`, `email`, `role`, `department_id`, `avatar`, `created_at`, `updated_at`) VALUES
-('user-admin', 'Municipal Admin', 'admin@municipal.gov', 'admin', NULL, NULL, NOW(3), NOW(3)),
-('user-head-1', 'Dept. Head Singh', 'head@municipal.gov', 'department_head', 'dept-1', NULL, NOW(3), NOW(3)),
-('user-staff-1', 'Staff Kumar', 'staff@municipal.gov', 'staff', 'dept-1', NULL, NOW(3), NOW(3)),
-('user-auditor', 'Auditor Sharma', 'auditor@municipal.gov', 'auditor', NULL, NULL, NOW(3), NOW(3)),
-('user-public-1', 'Citizen Rao', 'citizen@email.com', 'public', NULL, NULL, NOW(3), NOW(3));
+-- Users (default password for all: password123; hash = bcrypt)
+INSERT INTO `users` (`id`, `name`, `email`, `password_hash`, `role`, `department_id`, `avatar`, `created_at`, `updated_at`) VALUES
+('user-admin', 'Municipal Admin', 'admin@municipal.gov', '$2b$10$qy5ZPm5rmZISBCvFlwAwmes0amTvmffECcGVt2ABY4v/zzwa9JOti', 'admin', NULL, NULL, NOW(3), NOW(3)),
+('user-head-1', 'Dept. Head Singh', 'head@municipal.gov', '$2b$10$qy5ZPm5rmZISBCvFlwAwmes0amTvmffECcGVt2ABY4v/zzwa9JOti', 'department_head', 'dept-1', NULL, NOW(3), NOW(3)),
+('user-staff-1', 'Staff Kumar', 'staff@municipal.gov', '$2b$10$qy5ZPm5rmZISBCvFlwAwmes0amTvmffECcGVt2ABY4v/zzwa9JOti', 'staff', 'dept-1', NULL, NOW(3), NOW(3)),
+('user-auditor', 'Auditor Sharma', 'auditor@municipal.gov', '$2b$10$qy5ZPm5rmZISBCvFlwAwmes0amTvmffECcGVt2ABY4v/zzwa9JOti', 'auditor', NULL, NULL, NOW(3), NOW(3)),
+('user-public-1', 'Citizen Rao', 'citizen@email.com', '$2b$10$qy5ZPm5rmZISBCvFlwAwmes0amTvmffECcGVt2ABY4v/zzwa9JOti', 'public', NULL, NULL, NOW(3), NOW(3));
 
 -- Set department heads
 UPDATE `departments` SET `head_id` = 'user-head-1' WHERE `id` = 'dept-1';

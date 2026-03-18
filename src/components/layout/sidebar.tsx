@@ -23,26 +23,36 @@ export function Sidebar({ embedded = false }: SidebarProps) {
   const pathname = usePathname();
   const { role } = useAuth();
   const [collapsed, setCollapsed] = React.useState(false);
+  const [logoError, setLogoError] = React.useState(false);
   const navItems = getNavForRole(role);
 
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
+        "relative flex h-full min-h-0 flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
         embedded ? "w-full border-0" : collapsed ? "w-[72px]" : "w-64"
       )}
     >
-      <div className="flex h-14 items-center gap-2 border-b px-3">
-        <Link href="/dashboard" className="flex items-center gap-2 overflow-hidden">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Building2 className="h-5 w-5" />
-          </div>
+      <div className="flex h-[72px] shrink-0 items-center gap-0 border-b px-3">
+        <Link href="/dashboard" className="flex items-center gap-0 min-w-0 overflow-hidden rounded-lg py-1 transition-opacity hover:opacity-95">
+          {!logoError ? (
+            <img
+              src="/images/smc-removebg-preview.png"
+              alt="SMC Logo"
+              className={cn("h-[52px] w-auto object-contain object-left", collapsed ? "max-w-[52px]" : "max-w-[200px]")}
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Building2 className="h-5 w-5" />
+            </div>
+          )}
           {!collapsed && (
-            <span className="truncate text-sm font-semibold">SMC Portal</span>
+            <span className="ml-[-8px] truncate text-sm font-semibold">SMC Portal</span>
           )}
         </Link>
       </div>
-      <ScrollArea className="flex-1 py-4">
+      <ScrollArea className="flex-1 min-h-0 py-4">
         <nav className="flex flex-col gap-1 px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -104,7 +114,7 @@ export function Sidebar({ embedded = false }: SidebarProps) {
       {!embedded && (
         <>
           <Separator />
-          <div className="p-2">
+          <div className="shrink-0 p-2">
             <Button
               variant="ghost"
               size="icon"

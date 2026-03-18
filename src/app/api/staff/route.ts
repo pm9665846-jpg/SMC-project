@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { hash } from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 const STAFF_ROLES = ["admin", "department_head", "staff", "auditor"] as const;
@@ -73,10 +74,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const passwordHash = await hash(
+      typeof body.password === "string" && body.password.trim()
+        ? body.password.trim()
+        : "password123",
+      10
+    );
+
     const user = await prisma.user.create({
       data: {
         name: name.trim(),
         email: emailTrimmed,
+        passwordHash,
         role: validRole,
         departmentId: departmentId && String(departmentId).trim() ? String(departmentId).trim() : null,
       },

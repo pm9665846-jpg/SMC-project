@@ -39,8 +39,6 @@ const statusVariant = {
   rejected: "secondary",
 } as const;
 
-type BadgeVariant = "default" | "secondary" | "success" | "warning" | "pending";
-
 export default function ComplaintsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -63,32 +61,35 @@ export default function ComplaintsPage() {
   const complaints = complaintsData ?? [];
 
   const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
     return complaints.filter((c) => {
       const matchSearch =
-        !search ||
-        c.title.toLowerCase().includes(search.toLowerCase()) ||
-        c.id.toLowerCase().includes(search.toLowerCase());
-
+        !query ||
+        c.title.toLowerCase().includes(query) ||
+        c.id.toLowerCase().includes(query);
       const matchStatus = statusFilter === "all" || c.status === statusFilter;
-
       return matchSearch && matchStatus;
     });
   }, [complaints, search, statusFilter]);
 
   const dateStr = (s: string) => s.slice(0, 10);
 
-  const getPriorityVariant = (priority: string): BadgeVariant => {
+  const formatStatusLabel = (status: string) => {
+    const withSpaces = status.replace(/_/g, " ");
+    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+  };
+
+  const getPriorityClasses = (priority: string) => {
     switch (priority.toLowerCase()) {
-      case "urgent":
-        return "warning";
       case "high":
-        return "warning";
+      case "urgent":
+        return "border-red-500/50 text-red-600 bg-red-500/10";
       case "medium":
-        return "pending";
+        return "border-amber-500/50 text-amber-600 bg-amber-500/10";
       case "low":
-        return "secondary";
+        return "border-emerald-500/50 text-emerald-600 bg-emerald-500/10";
       default:
-        return "default";
+        return "border-muted text-foreground bg-muted/40";
     }
   };
 
@@ -193,7 +194,10 @@ export default function ComplaintsPage() {
                         <TableCell>{row.category}</TableCell>
 
                         <TableCell>
-                          <Badge variant={getPriorityVariant(row.priority)}>
+                          <Badge
+                            variant="outline"
+                            className={getPriorityClasses(row.priority)}
+                          >
                             {row.priority}
                           </Badge>
                         </TableCell>
@@ -206,7 +210,7 @@ export default function ComplaintsPage() {
                               ] ?? "secondary"
                             }
                           >
-                            {row.status.replace("_", " ")}
+                            {formatStatusLabel(row.status)}
                           </Badge>
                         </TableCell>
 

@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `complaint_attachments`;
 DROP TABLE IF EXISTS `complaints`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `departments`;
+DROP TABLE IF EXISTS `hero_slides`;
 
 -- ----------------------------
 -- Departments (no head_id FK yet)
@@ -43,6 +44,7 @@ CREATE TABLE `users` (
   `id` CHAR(36) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
   `role` ENUM('admin','department_head','staff','auditor','public') NOT NULL DEFAULT 'public',
   `department_id` CHAR(36) DEFAULT NULL,
   `avatar` VARCHAR(512) DEFAULT NULL,
@@ -264,6 +266,23 @@ CREATE TABLE `discussion_posts` (
   KEY `discussion_posts_discussion_id_idx` (`discussion_id`),
   CONSTRAINT `discussion_posts_discussion_id_fkey` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`id`) ON DELETE CASCADE,
   CONSTRAINT `discussion_posts_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Hero slides (public homepage slider)
+-- ----------------------------
+CREATE TABLE `hero_slides` (
+  `id` CHAR(36) NOT NULL,
+  `image_url` VARCHAR(512) NOT NULL,
+  `title` VARCHAR(255) DEFAULT NULL,
+  `subtitle` VARCHAR(500) DEFAULT NULL,
+  `link_url` VARCHAR(255) DEFAULT NULL,
+  `order` INT NOT NULL DEFAULT 0,
+  `active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  KEY `hero_slides_active_order_idx` (`active`,`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

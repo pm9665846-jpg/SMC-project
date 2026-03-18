@@ -2,9 +2,15 @@
 
 ## Fix: "Environment variable not found: DATABASE_URL"
 
-The build is set up to succeed **without** `DATABASE_URL` (a dummy value is used for `prisma generate`). For the app to work at runtime you must add your real database URL in Vercel.
+The build script creates a temporary `.env` with a dummy `DATABASE_URL` so `prisma generate` can run. If you still see the error:
 
-### Steps
+1. **Clear build cache and redeploy**  
+   Vercel → Project → **Settings** → **General** → scroll to **Build Cache** → **Clear** → Save. Then **Deployments** → **…** on latest → **Redeploy** (check "Clear build cache" if shown).
+
+2. **Confirm the build command**  
+   Settings → **General** → **Build & Development Settings** → **Build Command** should be empty (so Vercel uses `npm run build` from package.json) or exactly: `node scripts/build-with-prisma.js && next build`.
+
+3. **Add `DATABASE_URL` for runtime** (so the app connects to your DB after deploy):
 
 1. Open your project on [Vercel](https://vercel.com).
 2. Go to **Settings** → **Environment Variables**.

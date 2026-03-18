@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Search, Bell, Moon, Sun, Menu } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, Bell, Moon, Sun, Menu, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,8 +23,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
 
 export function CommandBar() {
+  const router = useRouter();
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const { user, setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [notifications] = React.useState([
     { id: "1", title: "New complaint #1245 assigned", time: "2m ago", unread: true },
@@ -38,6 +40,11 @@ export function CommandBar() {
 
   const switchRole = (role: UserRole) => {
     setUser(DEMO_USERS[role]);
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/login");
   };
 
   return (
@@ -130,6 +137,11 @@ export function CommandBar() {
                 {DEMO_USERS[r].name}
               </DropdownMenuItem>
             ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} className="text-muted-foreground">
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
